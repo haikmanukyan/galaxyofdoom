@@ -61,11 +61,12 @@ class Unit extends Interactable
 
     // UI
     public var g : Graphics;
-    public var selectionGraphic : Graphics;
     public var uiX : Float;
     public var uiY : Float;
     public var highlightMode : HighlightMode;
     public var interactive : Interactive;
+    // public var selectionGraphic : Graphics;
+    public var selectionGraphic : Object;
 
     @:isVar public var position(get, set) : Vector;
 
@@ -88,7 +89,10 @@ class Unit extends Interactable
 
     function initUI() {
         g = new Graphics(game.s2d);
-        selectionGraphic = new Graphics(game.s2d);
+        
+        // selectionGraphic = new Graphics(game.s2d);
+        selectionGraphic = game.cache.loadModel(hxd.Res.Selector);
+        selectionGraphic.scale(0.01);
     }
 
     function get_position() {
@@ -164,22 +168,29 @@ class Unit extends Interactable
     }
 
     public function highlight(mode : HighlightMode) {
-        selectionGraphic.clear();
+        // selectionGraphic.clear();
+        model.removeChild(selectionGraphic);
 
         switch (mode) {
             case Hover:
                 highlightMode = mode;
-                selectionGraphic.alpha = 0.3;
-                selectionGraphic.lineStyle(3, 0xff0000);
-                selectionGraphic.drawEllipse(0,0,40,20);
+
+                model.addChild(selectionGraphic);
+
+                // selectionGraphic.alpha = 0.1;
+                // selectionGraphic.lineStyle(3, 0xff0000);
+                // selectionGraphic.drawEllipse(0,0,40,20);
             case Select:
                 highlightMode = mode;
-                selectionGraphic.alpha = 0.2;
-                selectionGraphic.lineStyle(3, 0x0000ff);
-                selectionGraphic.drawEllipse(0,0,40,20);
+
+                model.addChild(selectionGraphic);
+                // selectionGraphic.alpha = 0.5;
+                // selectionGraphic.lineStyle(3, 0x0000ff);
+                // selectionGraphic.drawEllipse(0,0,40,20);
             case None:
                 highlightMode = mode;
-                selectionGraphic.clear();
+                // selectionGraphic.clear();
+                model.removeChild(selectionGraphic);
         }
     }
 
@@ -257,8 +268,8 @@ class Unit extends Interactable
 
         g.x = uiX;
         g.y = uiY;
-        selectionGraphic.x = uiX;
-        selectionGraphic.y = uiY;
+        // selectionGraphic.x = uiX;
+        // selectionGraphic.y = uiY;
     }
 
     public function update(dt:Float) {       
