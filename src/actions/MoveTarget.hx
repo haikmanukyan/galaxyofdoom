@@ -14,17 +14,19 @@ class MoveTarget extends Action {
     }
 
     public override function update(dt : Float) {
-        if (target != null && target.isAlive) {
-            unit.setDestination(target.position);
-            unit.stoppingDistance = stoppingDistance + target.stats.physicsSize + unit.stats.physicsSize;
-            
-            if (unit.reachedDestination()) {
-                state = ActionState.Complete;
-                unit.stoppingDistance = 1;
-            }
+        if (target == null || !target.isAlive) {
+            state = ActionState.Failed;
+            return; 
+        }
+
+        var stoppingDistance = this.stoppingDistance + target.stats.physicsSize + unit.stats.physicsSize;
+        
+        if (unit.reachedDestination(target.position, stoppingDistance)) {            
+            state = ActionState.Complete;
         }
         else {
-            state = ActionState.Failed;
+            unit.setDestination(target.position);
+            unit.stoppingDistance = stoppingDistance;
         }
     }
 }

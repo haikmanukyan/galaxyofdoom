@@ -14,12 +14,13 @@ class Move extends Action {
     }
 
     public override function update(dt : Float) {
-        unit.setDestination(destination);
-        unit.stoppingDistance = stoppingDistance;
-        
-        if (unit.reachedDestination()) {
+        if (unit.reachedDestination(destination, stoppingDistance)) {
             state = ActionState.Complete;
             unit.stoppingDistance = 1;
+        }
+        else {
+            unit.setDestination(destination);
+            unit.stoppingDistance = stoppingDistance;
         }
     }
 }

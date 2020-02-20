@@ -1,3 +1,4 @@
+import hxd.Window;
 import h3d.scene.Interactive;
 import ResourceNodes.RecourceNodes;
 
@@ -35,22 +36,17 @@ class Game extends hxd.App
 
 	function initScene() {
 		scene = new h3d.scene.World(64, 128, s3d);
-		var t = scene.loadModel(hxd.Res.tree);
-		var r = scene.loadModel(hxd.Res.rock);
 		
-		// for( i in 0...100 )
-			// world.add(Std.random(2) == 0 ? t : r, Math.random() * 128, Math.random() * 128, 0, 1.2 + hxd.Math.srand(0.4), hxd.Math.srand(Math.PI));
-		scene.done();
-
 		var groundPrim = new h3d.prim.Cube();
 		groundPrim.addNormals();
 		groundPrim.addUVs();
-		
 		ground = new Mesh(groundPrim, s3d);
 		ground.getMaterials()[0].color = new Vector(0.4,1,0);
 		ground.scaleX = 128;
 		ground.scaleY = 128;
 		ground.z = -1.01;
+		
+		// ground = cache.loadModel(hxd.Res.Terrain);
 		
 		new h3d.scene.fwd.DirLight(new Vector( 0.3, -0.4, -0.9), s3d);
 		s3d.lightSystem.ambientLight.setColor(0x909090);
@@ -142,6 +138,7 @@ class Game extends hxd.App
 
 	override function init() 
 	{
+		// Window.getInstance().setFullScreen(true);
 		Utils.init(this);
 		cache = new ModelCache();
 		units = new Array<Unit>();
@@ -174,6 +171,7 @@ class Game extends hxd.App
 			unit.update(dt);
 		
 		world.step(dt, 2, 10);
+		world.drawDebugData();
 
 		updateUI(dt);
 	}

@@ -1,15 +1,27 @@
 import Unit.HighlightMode;
 
 class Selection {
-    public var controller : Controller;
+    public var controller : GameController;
     public var units : Array <Unit>;
     public var activeIdx : Int;
+    public var activeUnit : Unit;
 
     public var isControllable : Bool;
 
-    public function new (units : Array<Unit>, controller : Controller) {
+    public function new (controller : GameController) {
         this.controller = controller;
-        
+        units = new Array<Unit>();
+    }
+
+    public function setActive(unit : Unit) {
+        activeIdx = units.indexOf(unit);
+        activeUnit = unit;
+        controller.updateSelection();
+    }
+
+    public function select(units : Array<Unit>) {
+        deselect();
+
         var remove : Array<Unit> = new Array<Unit>();
         var removeBuildings = false;
         var removeResources = false;
@@ -51,8 +63,11 @@ class Selection {
             unit.highlight(Select);
         }
         this.units = units;
-
         activeIdx = 0;
+        if (units.length > 0)
+            activeUnit = units[activeIdx];
+
+        controller.updateSelection();
     }
 
     public function deselect() {

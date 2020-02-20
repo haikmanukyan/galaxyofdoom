@@ -4,3 +4,4 @@
 -cp src
 -hl haxeTS.hl
 -main Game
+# -D windowSize=1366x768

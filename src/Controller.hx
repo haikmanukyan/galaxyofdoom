@@ -44,10 +44,13 @@ class Controller {
     }
 
     public function hasTarget() {
+        return target != null;  
         if (target == null) return false;
         return target.isAlive;
     }
     
     public function update (dt : Float) {
+    }
+    public function updateSelection () {
     }
 }

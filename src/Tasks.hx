@@ -7,6 +7,11 @@ class Tasks {
             new Move(controller.position)
         ]);
     }
+    public static var Follow = function (unit : Unit, controller : Controller) {
+        return new Task([
+            new MoveTarget(controller.target)
+        ], true);
+    }
     public static var Patrol = function (unit : Unit, controller : Controller) {
         return new Task([
             new Move(controller.position),
@@ -45,10 +50,17 @@ class Tasks {
         }
     }
     public static var Deliver = function (unit : Unit, controller : Controller) {
-        return new Task([
-            new Deliver(controller.target),
-            new Move(controller.position, controller.target.stats.physicsSize)
-        ]);
+        if (controller.hasTarget()) {
+            return new Task([
+                new Deliver(controller.target),
+                new Move(controller.position, controller.target.stats.physicsSize)
+            ]);
+        }
+        else {
+            return new Task([
+                new Debug("No Target!")
+            ]);
+        }
     }
     public static var Build = function (spawnBuilding, controller : Controller = null) {
         return function (unit : Unit, controller : Controller) {
@@ -71,5 +83,19 @@ class Tasks {
         return new Task([
             new Debug("Hello!")
         ]);
+    }
+
+    public static var WorkerSmart = function (unit : Unit, controller : Controller) {
+        if (controller.hasTarget()) {
+            if (controller.target.stats.isResource) {
+                return Tasks.Gather(unit, controller);
+            }
+            else {
+                return Tasks.Follow(unit, controller);
+            }
+        }
+        else {
+            return Tasks.MoveToClick(unit, controller);
+        } 
     }
 }

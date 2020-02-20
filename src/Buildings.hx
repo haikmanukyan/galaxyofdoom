@@ -34,7 +34,10 @@ class Buildings {
 		building.controlTree = [
 			{
 				key : K.A,
-				action : controller.Start(Tasks.Train(Units.Marine, new Vector(2.5,2.5,0)))
+				action : controller.Start(Tasks.Train(Units.Marine, new Vector(2.5,2.5,0))),
+				icon: null,
+				name: "Marnie", 
+				description: ""
 			},
         ];
         return building;
@@ -52,7 +55,10 @@ class Buildings {
 		building.controlTree = [
 			{
 				key : K.S,
-				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0)))
+				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
+				icon: null,
+				name: "SCV", 
+				description: ""
 			}
         ];
 		

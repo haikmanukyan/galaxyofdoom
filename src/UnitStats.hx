@@ -1,3 +1,6 @@
+import hxd.res.Model;
+import hxd.res.Image;
+import h3d.scene.Object;
 import Globals.Resource;
 
 class UnitStats {
@@ -15,8 +18,16 @@ class UnitStats {
     public var attackType : Int; // Ranged mellee
     public var armor : Int; // OR enum?
 
+    public var name : String;
+    public var model : Model;
+    public var icon : Image;
+    public var portrait : Image;
+    public var resourceModel : Model;
+
+    // NON EDITABLE!
     public var hitPoints : Float;
     public var cost : Resource;
+
 
     public function new () {
         hitPoints = maxHitPoints;

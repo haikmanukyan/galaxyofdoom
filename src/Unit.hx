@@ -1,3 +1,4 @@
+import hxd.res.Image;
 import States.StatesEnum;
 import Globals.ControlNode;
 import Globals.Resource;
@@ -46,7 +47,8 @@ class Unit extends Interactable
     
     // Graphics
     public var model : Object;
-    public var moveAnimation : Animation;
+    public var icon : Image;
+    public var portrait : Image;
     public var resourceModel : Object;
     
     // Other stats
@@ -162,6 +164,7 @@ class Unit extends Interactable
         initPhysics(bodyType);
         initUI();
         interactive = new h3d.scene.Interactive(model.getCollider(), game.s3d);
+        interactive.enableRightButton = true;
 
         game.registerUnit(this);
         isAlive = true;
@@ -242,11 +245,14 @@ class Unit extends Interactable
         }
         else {
             body.setLinearVelocity(new B2Vec2(0,0));
+            setDestination(position);
         }
     }
 
-    public function reachedDestination() {
-        return (position.distance(destination) < stoppingDistance);
+    public function reachedDestination(destination = null, stoppingDistance = null) {
+        destination = destination == null ? this.destination : destination;
+        stoppingDistance = stoppingDistance == null ? this.stoppingDistance : stoppingDistance;
+        return (position.distance(destination) <= stoppingDistance);
     }
 
     function updateUI() {
@@ -268,8 +274,6 @@ class Unit extends Interactable
 
         g.x = uiX;
         g.y = uiY;
-        // selectionGraphic.x = uiX;
-        // selectionGraphic.y = uiY;
     }
 
     public function update(dt:Float) {       
