@@ -1,3 +1,6 @@
+package gamedata;
+
+import controllers.Controller;
 import actions.*;
 import h3d.Vector;
 

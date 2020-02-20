@@ -1,9 +1,12 @@
+package gamedata;
+
+import controllers.Controller;
+
 enum StatesEnum {
     Passive;
     Idle;
     Aggro;
 }
-
 
 class States {  
     static var Passive : State = new State("passive", [],[]);

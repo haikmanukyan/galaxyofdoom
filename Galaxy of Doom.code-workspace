@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "galaxyofdoom",
+			"path": "."
+		},
+		{
+			"name": "galaxyofdoom-server",
+			"path": "C:\\Users\\haikm\\source\\projects\\Haxe\\galaxyofdoom-server"
+		},
+		{
+			"name": "shared",
+			"path": "C:\\Users\\haikm\\source\\projects\\Haxe\\shared"
+		}
+	],
+	"settings": {}
+}

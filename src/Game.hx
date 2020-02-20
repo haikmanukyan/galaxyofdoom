@@ -1,15 +1,18 @@
+import gamedata.Units;
 import hxd.Window;
 import h3d.scene.Interactive;
-import ResourceNodes.RecourceNodes;
-
-import box2D.common.math.B2Vec2;
-import box2D.dynamics.B2World;
-
 import h3d.prim.Cube;
 import h3d.scene.Mesh;
 import h3d.Vector;
 import h3d.scene.Object;
 import h3d.prim.ModelCache;
+
+import box2D.common.math.B2Vec2;
+import box2D.dynamics.B2World;
+
+import controllers.GameController;
+import gamedata.ResourceNodes.RecourceNodes;
+
 
 class Game extends hxd.App 
 {
@@ -21,6 +24,8 @@ class Game extends hxd.App
 
 	public var units : Array<Unit>;
 	
+	public var window : Window;
+
 	// Physics
 	public var world : B2World;
 	
@@ -117,7 +122,7 @@ class Game extends hxd.App
 	}
 
 	function initEvents() {
-		hxd.Stage.getInstance().addEventTarget(controller.onEvent);
+		Window.getInstance().addEventTarget(controller.onEvent);
 	}
 
 	function initUI() {
@@ -138,10 +143,11 @@ class Game extends hxd.App
 
 	override function init() 
 	{
-		// Window.getInstance().setFullScreen(true);
 		Utils.init(this);
 		cache = new ModelCache();
 		units = new Array<Unit>();
+
+		var network = new Network();
 
 		initScene();
 		initPhysics();

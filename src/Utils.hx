@@ -1,3 +1,5 @@
+import controllers.Controller;
+
 class Utils {
     static var game : Game;
 

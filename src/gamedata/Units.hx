@@ -1,7 +1,12 @@
-import States.StatesEnum;
-import actions.*;
+package gamedata;
+
 import h3d.Vector;
 import hxd.Key in K;
+
+import actions.*;
+import gamedata.States.*;
+import gamedata.States.StatesEnum;
+import controllers.Controller;
 
 class Units {
 	public static function WorkerModel (controller : Controller) {

@@ -1,4 +1,7 @@
-import States.StatesEnum;
+package gamedata;
+
+import controllers.Controller;
+import gamedata.States.StatesEnum;
 import box2D.dynamics.B2BodyType;
 import actions.*;
 import h3d.Vector;

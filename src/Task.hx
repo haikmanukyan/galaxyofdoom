@@ -1,3 +1,4 @@
+import controllers.Controller;
 import h3d.scene.Object;
 import Globals;
 import Action.ActionState;

@@ -1,3 +1,5 @@
+package controllers;
+
 import Globals.ControlNode;
 import Unit.HighlightMode;
 import h3d.col.Point;
