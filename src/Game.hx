@@ -174,7 +174,7 @@ class Game extends hxd.App
 	}
 
 	function onPlayerAdded(player : network.Player, playerId : String) {
-		trace(player);
+		if (player.uid == network.room.sessionId) return;
 		var ghostController : GhostController = new GhostController(this, player);
 		controllers.push(ghostController);
 	}

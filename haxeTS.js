@@ -460,7 +460,9 @@ Game.prototype = $extend(hxd_App.prototype,{
 		haxe_Log.trace("joined!",{ fileName : "src/Game.hx", lineNumber : 173, className : "Game", methodName : "onJoined"});
 	}
 	,onPlayerAdded: function(player,playerId) {
-		haxe_Log.trace(player,{ fileName : "src/Game.hx", lineNumber : 177, className : "Game", methodName : "onPlayerAdded"});
+		if(player.uid == this.network.room.sessionId) {
+			return;
+		}
 		var ghostController = new controllers_GhostController(this,player);
 		this.controllers.push(ghostController);
 	}
@@ -660,7 +662,7 @@ Network.getInstance = function() {
 Network.prototype = {
 	join: function() {
 		var _gthis = this;
-		this.client = new io_colyseus_Client("ws://localhost:2567");
+		this.client = new io_colyseus_Client("wss://galaxy-of-doom.herokuapp.com/");
 		this.client.joinOrCreate_network_LobbyState("lobby",new haxe_ds_StringMap(),network_LobbyState,function(err,room) {
 			if(err != null) {
 				haxe_Log.trace("JOIN ERROR: " + err,{ fileName : "src/Network.hx", lineNumber : 26, className : "Network", methodName : "join"});
