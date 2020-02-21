@@ -1,5 +1,6 @@
 package actions;
 
+import network.MoveAction;
 import box2D.common.math.B2Vec2;
 import Action.ActionState;
 import h3d.Vector;
@@ -22,5 +23,13 @@ class Move extends Action {
             unit.setDestination(destination);
             unit.stoppingDistance = stoppingDistance;
         }
+    }
+
+    public override function dump() {
+        return {
+            type: "Move",
+            destination: Utils.dumpVec(destination),
+            stoppstoppingDistance: stoppingDistance
+        };
     }
 }

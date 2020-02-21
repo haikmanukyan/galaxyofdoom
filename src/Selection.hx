@@ -1,3 +1,7 @@
+import gamedata.Tasks;
+import actions.Move;
+import network.LobbyState;
+import io.colyseus.Room;
 import controllers.GameController;
 import Unit.HighlightMode;
 
@@ -8,6 +12,7 @@ class Selection {
     public var activeUnit : Unit;
 
     public var isControllable : Bool;
+    var room : Room<LobbyState>;
 
     public function new (controller : GameController) {
         this.controller = controller;
@@ -21,6 +26,7 @@ class Selection {
     }
 
     public function select(units : Array<Unit>) {
+        room = Network.getInstance().room;
         deselect();
 
         var remove : Array<Unit> = new Array<Unit>();
@@ -96,28 +102,26 @@ class Selection {
         }
     }
 
-    public function getRMB() {
+    public function getSmartTask() {
         if (units.length > 0) {
-            return units[activeIdx].taskRMB;
+            return units[activeIdx].smartTask;
         }
         else {
             return null;
         }
     }
 
-    public function getLMB() {
-        if (units.length > 0) {
-            return units[activeIdx].taskLMB;
+    public function StartTask(taskSpawner, queue : Bool = false) {
+        for (unit in units) {   
+            var task = taskSpawner(unit, controller);
+            unit.startTask(task);
+            
+            if (room != null) { 
+                Network.getInstance().room.send({
+                    type: "command",
+                    task: task.dump()
+                });
+            }
         }
-        else {
-            return null;
-        }
-    }
-
-    public function StartTask(task, queue : Bool = false) {
-        for (unit in units) {
-            unit.startTask(task(unit, controller));
-        }
-
     }
 }

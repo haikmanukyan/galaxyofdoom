@@ -25,11 +25,11 @@ class RecourceNodes {
     }
     public static function GasGeyser (controller : Controller) {
 		var stats = new UnitStats();
-        stats.physicsSize = 0.7;
+        stats.physicsSize = 2;
         stats.isResource = true;
         
         var model = controller.game.cache.loadModel(hxd.Res.Cube);
-        model.scale(1.1);
+        model.scale(2);
         model.getMaterials()[0].color = new Vector(0,1,0.5);
         stats.movementSpeed = 0;
         

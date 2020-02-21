@@ -5,7 +5,7 @@ import actions.*;
 import h3d.Vector;
 
 class Tasks {
-    public static var MoveToClick = function (unit : Unit, controller : Controller) {
+    public static var Move = function (unit : Unit, controller : Controller) {
         return new Task([
             new Move(controller.position)
         ]);
@@ -98,7 +98,20 @@ class Tasks {
             }
         }
         else {
-            return Tasks.MoveToClick(unit, controller);
+            return Tasks.Move(unit, controller);
         } 
+    }
+
+    public static function Get(taskName : String, param : String) {
+        switch (taskName) {
+            case "worker_smart":
+                return WorkerSmart;
+        }
+        return null;
+    }
+
+    public static function Find(task : Dynamic) {
+        if (task == WorkerSmart) return "worker_smart";
+        return "null";
     }
 }

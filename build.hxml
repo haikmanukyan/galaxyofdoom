@@ -1,6 +1,8 @@
 -lib heaps
+-lib colyseus
 -lib box2d
 -lib hlsdl
+-D windows
 -cp src
 -hl haxeTS.hl
 -main Game

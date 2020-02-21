@@ -4,6 +4,7 @@ import Globals;
 class Player {
     public var resources : Resource;
     public var color : Vector;
+    public var uid: String;
 
     public function new () {
         resources = { minerals:0, gas:0 };

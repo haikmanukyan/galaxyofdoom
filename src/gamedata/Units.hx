@@ -93,7 +93,7 @@ class Units {
 				description: ""
 			}
         ];
-        unit.taskRMB = Tasks.WorkerSmart;
+        unit.smartTask = Tasks.WorkerSmart;
         
         return unit;
 	}
@@ -119,7 +119,7 @@ class Units {
 				name: "Patrol", description: ""
 			}
 		];
-        unit.taskRMB = Tasks.MoveToClick;
+        unit.smartTask = Tasks.Move;
         
         return unit;
     }

@@ -1,26 +1,29 @@
-import gamedata.States;
-import controllers.UnitController;
-import controllers.Controller;
-import hxd.res.Image;
-import gamedata.States.StatesEnum;
-import Globals.ControlNode;
-import Globals.Resource;
-import h3d.scene.Interactive;
 import h2d.Graphics;
+import hxd.Window;
+import h3d.Vector;
+import hxd.res.Image;
+import h3d.scene.Interactive;
+import h3d.mat.Pass;
+import h3d.pass.Outline;
+import h3d.anim.Animation;
+import h3d.prim.ModelCache;
+import h3d.scene.Scene;
+import h3d.scene.Object;
+
 import box2D.dynamics.B2BodyType;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2FixtureDef;
 import box2D.collision.shapes.B2CircleShape;
 import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2Body;
-import h3d.mat.Pass;
-import h3d.pass.Outline;
+
+import gamedata.States;
+import gamedata.States.StatesEnum;
+import controllers.UnitController;
+import controllers.Controller;
+import Globals.ControlNode;
+import Globals.Resource;
 import Task.TaskState;
-import h3d.Vector;
-import h3d.anim.Animation;
-import h3d.prim.ModelCache;
-import h3d.scene.Object;
-import h3d.scene.Scene;
 
 enum HighlightMode {
     Hover;
@@ -38,14 +41,19 @@ class Unit extends Interactable
     public var ai : Controller;
     public var controller : Controller;
     
-    // Actions
+    // Shareable
+    public var uid: String;
+    public var isAlive : Bool;
+    public var destination : Vector;
     public var task : Task;
     public var state : State;
+    public var stats : UnitStats;
+    public var carries : Resource;
+
+    // PRivate
     public var taskQueue : Array<Dynamic>;
-    public var taskLMB : Dynamic;
-    public var taskRMB : Dynamic;
+    public var smartTask : Dynamic;
     public var controlTree : Array<ControlNode>;
-    public var destination : Vector;
     public var stoppingDistance : Float = 1;
     
     // Graphics
@@ -53,11 +61,6 @@ class Unit extends Interactable
     public var icon : Image;
     public var portrait : Image;
     public var resourceModel : Object;
-    
-    // Other stats
-    public var isAlive : Bool;
-    public var stats : UnitStats;
-    public var carries : Resource;
     
     // Physics
     public var body : B2Body;
@@ -70,7 +73,6 @@ class Unit extends Interactable
     public var uiY : Float;
     public var highlightMode : HighlightMode;
     public var interactive : Interactive;
-    // public var selectionGraphic : Graphics;
     public var selectionGraphic : Object;
 
     @:isVar public var position(get, set) : Vector;
@@ -95,7 +97,6 @@ class Unit extends Interactable
     function initUI() {
         g = new Graphics(game.s2d);
         
-        // selectionGraphic = new Graphics(game.s2d);
         selectionGraphic = game.cache.loadModel(hxd.Res.Selector);
         selectionGraphic.scale(0.01);
     }
@@ -146,6 +147,8 @@ class Unit extends Interactable
     public function new (controller : Controller, model : Object, stats:UnitStats = null, state : StatesEnum = StatesEnum.Passive, bodyType : B2BodyType = DYNAMIC_BODY) {
         game = controller.game;
         player = controller.player;
+        uid = Utils.uuid();
+        
         this.controller = controller;
         this.ai = new UnitController(this, game, player);
         
@@ -162,10 +165,23 @@ class Unit extends Interactable
         transitionToState(state);
     }
 
-    public function addToScene() {
+    public function initNetwork() {
+        game.network.room.send({
+            type:"newUnit",
+            unit:uid,
+            position: [position.x, position.y, position.z]
+        });
+    }
+
+    public function addToScene(position : Vector = null) {
+        if (position == null) position = new Vector();
+
         game.s3d.addChild(model);
         initPhysics(bodyType);
         initUI();
+
+        this.position = position;
+
         interactive = new h3d.scene.Interactive(model.getCollider(), game.s3d);
         interactive.enableRightButton = true;
 
@@ -180,22 +196,12 @@ class Unit extends Interactable
         switch (mode) {
             case Hover:
                 highlightMode = mode;
-
                 model.addChild(selectionGraphic);
-
-                // selectionGraphic.alpha = 0.1;
-                // selectionGraphic.lineStyle(3, 0xff0000);
-                // selectionGraphic.drawEllipse(0,0,40,20);
             case Select:
                 highlightMode = mode;
-
                 model.addChild(selectionGraphic);
-                // selectionGraphic.alpha = 0.5;
-                // selectionGraphic.lineStyle(3, 0x0000ff);
-                // selectionGraphic.drawEllipse(0,0,40,20);
             case None:
                 highlightMode = mode;
-                // selectionGraphic.clear();
                 model.removeChild(selectionGraphic);
         }
     }
@@ -235,7 +241,7 @@ class Unit extends Interactable
         nextTask(ai);
     }
 
-    function move(dt:Float) {
+    function updatePosition(dt:Float) {
         if (!reachedDestination()) {
             var direction = destination.sub(position).getNormalized();
             direction.scale3(stats.movementSpeed);
@@ -259,7 +265,7 @@ class Unit extends Interactable
     }
 
     function updateUI() {
-        var projection = game.s3d.camera.project(position.x, position.y, position.z, hxd.Window.getInstance().width, hxd.Stage.getInstance().height);
+        var projection = game.s3d.camera.project(position.x, position.y, position.z, Window.getInstance().width, Window.getInstance().height);
         uiX = projection.x;
         uiY = projection.y;
         
@@ -287,7 +293,7 @@ class Unit extends Interactable
             return;
         }
 
-        move(dt);
+        updatePosition(dt);
 
         model.x = position.x;
         model.y = position.y;
@@ -312,6 +318,7 @@ class Unit extends Interactable
             }
         }
 
+        ai.update(dt);
         updateUI();
     }
 }

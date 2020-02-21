@@ -1,3 +1,6 @@
+import haxe.Timer;
+import controllers.Controller;
+import hxd.Key;
 import gamedata.Units;
 import hxd.Window;
 import h3d.scene.Interactive;
@@ -11,11 +14,13 @@ import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2World;
 
 import controllers.GameController;
+import controllers.GhostController;
 import gamedata.ResourceNodes.RecourceNodes;
 
 
 class Game extends hxd.App 
 {
+	public var gameReady: Bool = false;
 	public var cache : ModelCache;
 	var scene : h3d.scene.World;
 	var shadow :h3d.pass.DefaultShadowMap;
@@ -32,9 +37,11 @@ class Game extends hxd.App
 	// Testing with Player
 	public var player : Player;
 	public var controller : GameController;
+	public var passiveController : Controller;
 
 	public var aiPlayer : Player;
-	public var aiController : GameController;
+	public var aiController : GhostController;
+	public var network:Network;
 
 	// UI
 	var tf : h2d.Text;
@@ -46,6 +53,7 @@ class Game extends hxd.App
 		groundPrim.addNormals();
 		groundPrim.addUVs();
 		ground = new Mesh(groundPrim, s3d);
+		// ground = cache.loadModel(hxd.Res.Cube);
 		ground.getMaterials()[0].color = new Vector(0.4,1,0);
 		ground.scaleX = 128;
 		ground.scaleY = 128;
@@ -71,54 +79,32 @@ class Game extends hxd.App
 		// new CustomCamera(s3d).loadFromCamera();
 	}
 
-	function initControllers() {
-		// Human Player
-		player = new Player();
-		player.resources.minerals = 200;
-		controller = new GameController(this, player);
-		controller.reset();
+	function initMap() {
+		passiveController = new Controller(this, null);
 
-		// AI Player
-		aiPlayer = new Player();
-		aiPlayer.color = new Vector(0,0,1);
-		aiPlayer.resources.minerals = 200;
+		var minerals = [
+			new Vector(18,52),
+			new Vector(16,64),
+			new Vector(18,76),
+			new Vector(110,52),
+			new Vector(112,64),
+			new Vector(110,76),
+		];
+		var gas = [
+			new Vector(24,36),
+			new Vector(24,92),
+			new Vector(104,36),
+			new Vector(104,92),
+		];
 
-		aiController = new GameController(this, aiPlayer);
-		aiController.reset();
-	}
-
-	function initUnits() {
-		// Resources
-		var patch = RecourceNodes.MineralPatch(controller);
-		patch.addToScene();
-		patch.position = new Vector(72,60,0);
-
-		var patch = RecourceNodes.MineralPatch(controller);
-		patch.addToScene();
-		patch.position = new Vector(74,64,0);
-
-		var patch = RecourceNodes.MineralPatch(controller);
-		patch.addToScene();
-		patch.position = new Vector(72,68,0);
-
-		var patch = RecourceNodes.GasGeyser(controller);
-		patch.addToScene();
-		patch.position = new Vector(72,54,0);
-
-		var patch = RecourceNodes.GasGeyser(controller);
-		patch.addToScene();
-		patch.position = new Vector(72,78,0);
-		
-		// Player
-		var unit = Units.Worker(controller);
-		unit.addToScene();
-		unit.position = new Vector(64,64,0);
-
-		// AI
-		var unit = Units.Marine(aiController);
-		unit.addToScene();
-		unit.position = new Vector(32,64,0);
-
+		for (pos in minerals) {
+			var patch = RecourceNodes.MineralPatch(passiveController);
+			patch.addToScene(pos);
+		}
+		for (pos in gas) {
+			var patch = RecourceNodes.GasGeyser(passiveController);
+			patch.addToScene(pos);
+		}
 	}
 
 	function initEvents() {
@@ -146,18 +132,83 @@ class Game extends hxd.App
 		Utils.init(this);
 		cache = new ModelCache();
 		units = new Array<Unit>();
+		network = Network.getInstance();
+		network.join();
+	}
 
-		var network = new Network();
-
+	function startGame() {
 		initScene();
 		initPhysics();
+		initNetwork();
 		
-		initControllers();
-		
-		initUnits();
+		initGameController();
+		initMap();
 		initUI();
 
-		initEvents();		
+		initEvents();	
+		
+		gameReady = true;
+	}
+
+	var players : Array<Player>;
+	var controllers : Array<Controller>;
+
+	function initNetwork() {
+		players = new Array<Player>();
+		controllers = new Array<Controller>();
+
+		network.room.onMessage += onMessage;
+		network.room.send({
+			"type":"getPlayers"
+		});
+	}
+
+	function initNetworkPlayer(playerId : String, playerColor : Int) {
+		var ghostPlayer : Player = new Player();
+		ghostPlayer.color = Vector.fromColor(playerColor);
+		var ghost : GhostController = new GhostController(this, ghostPlayer, playerId);
+		controllers.push(ghost);
+	}
+
+	function initNetworkPlayers(playerIds : Array<String>, playerColors : Array<Int>) {		
+		for (i in 0 ... playerIds.length) {
+			if (playerIds[i] != network.room.sessionId) {
+				initNetworkPlayer(playerIds[i], playerColors[i]);
+			}
+		}
+	}
+
+	function onNewPlayer(uid : String, color : Int) {
+		var timer : Timer = new Timer(100);
+		timer.run = function () { initNetworkPlayer(uid, color); timer.stop();}		
+	}
+
+	public function getUnitById(uid : String) {
+		for (unit in units) 
+			if (unit.uid == uid)
+				return unit;
+		return null;
+	}
+
+	function initGameController() {
+		// Human Player
+		player = new Player();
+		player.resources.minerals = 200;
+		controller = new GameController(this, player);
+		controller.reset();
+	
+		players.push(player);
+		controllers.push(controller);
+	}
+
+	function onMessage(message : Dynamic) {
+		switch (message.type) {
+			case "playerList":
+				trace(message.players);
+				initNetworkPlayers(message.players, message.colors);
+			case "newPlayer":
+				onNewPlayer(message.uid, message.color);
+		}
 	}
 
 	function updateUI(dt : Float) {
@@ -170,14 +221,27 @@ class Game extends hxd.App
 	}
 
 	override function update(dt:Float) {
-		controller.update(dt);
-		aiController.update(dt);
+		if (network.room == null) return;
+		if (!gameReady) {
+			trace("CONNECTION ESTABLISHED!");
+			startGame();
+			gameReady = true;
+		}
+
+		for (controller in controllers) {
+			controller.update(dt);
+		}
 		
-		for (unit in units)
+		for (unit in units) {
 			unit.update(dt);
+		}
 		
 		world.step(dt, 2, 10);
 		world.drawDebugData();
+
+		if (Key.isPressed(Key.N)) {
+			network.join();
+		}
 
 		updateUI(dt);
 	}

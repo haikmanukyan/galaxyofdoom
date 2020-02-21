@@ -13,8 +13,7 @@ class TrainUnit extends Action {
     }
 
     public override function update(dt : Float) {
-        trainUnit.addToScene();
-        trainUnit.position = unit.position.add(delta);
+        trainUnit.addToScene(unit.position.add(delta));
         state = ActionState.Complete;
     }
 

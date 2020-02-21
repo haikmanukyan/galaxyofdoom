@@ -20,4 +20,8 @@ class Action {
 
     public function update(dt:Float) {
     }
+
+    public function dump() {
+        return {};
+    }
 }

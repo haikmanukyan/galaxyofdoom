@@ -1,3 +1,4 @@
+import actions.Move;
 import controllers.Controller;
 import h3d.scene.Object;
 import Globals;
@@ -69,5 +70,31 @@ class Task {
             case Failed:
                 state = Failed;
         }
+    }
+
+    public function dump() {
+        var actionsDump = new Array();
+        for (action in actions)
+            actionsDump.push(action.dump());
+        return {
+            action:(action==null?null:action.dump()),
+            actions:actionsDump
+        }
+    }
+
+    public static function fromData(task : {actions:Array<Dynamic>}) {
+        var actions : Array<Action> = new Array<Action>();
+        var action : Action;
+
+        for (actionData in task.actions) {
+            switch (actionData.type) {
+                case "Move":
+                    action = new Move(Utils.arr2vec(actionData.destination), actionData.stoppingDistance);
+                    actions.push(action);            
+            }
+        }
+
+        var newTask :Task = new Task(actions);
+        return newTask;
     }
 }

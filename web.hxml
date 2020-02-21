@@ -1,5 +1,6 @@
 -lib heaps
 -lib box2d
+-lib colyseus
 -cp src
 -js haxeTS.js
 -main Game
