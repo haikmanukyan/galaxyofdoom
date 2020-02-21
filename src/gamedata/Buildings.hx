@@ -9,25 +9,33 @@ import hxd.Key in K;
 
 class Buildings {
 	public static function BarracksModel (controller : Controller) {
-		var model = controller.game.cache.loadModel(hxd.Res.Cube);
-		model.scaleX = 2;
-		model.scaleY = 1.5;
-		model.scaleZ = 1.5;
-		model.setRotation(0,0,Math.PI / 4);
+		var model = controller.game.cache.loadModel(hxd.Res.Barracks);
+		model.setRotation(0,0,3 * Math.PI / 4);
+		model.scale(0.05);
 		return model;
 	}
 	public static function CommandCenterModel(controller : Controller) {
-		var model = controller.game.cache.loadModel(hxd.Res.Cube);
-		model.scaleX = 3;
-		model.scaleY = 3;
-		model.scaleZ = 2;
+		var model = controller.game.cache.loadModel(hxd.Res.CommandCenter);
 		model.setRotation(0,0,Math.PI / 4);
+		model.scale(0.05);
+		return model;		
+	}
+	public static function StarportModel(controller : Controller) {
+		var model = controller.game.cache.loadModel(hxd.Res.StarPort);
+		model.setRotation(0,0,3*Math.PI / 4);
+		model.scale(0.05);
+		return model;		
+	}
+	public static function FactoryModel(controller : Controller) {
+		var model = controller.game.cache.loadModel(hxd.Res.Factory);
+		model.setRotation(0,0,3*Math.PI / 4);
+		model.scale(0.04);
 		return model;		
 	}
 	
     public static function Barracks (controller : Controller) {
 		var stats = new UnitStats();
-		stats.physicsSize = 2;
+		stats.physicsSize = 4;
 		stats.isBuilding = true;
 		stats.cost = {minerals: 50, gas: 0};
 		stats.name = "Barracks";
@@ -48,7 +56,7 @@ class Buildings {
 	}
 	public static function CommandCenter (controller : Controller) {
 		var stats = new UnitStats();
-		stats.physicsSize = 3;
+		stats.physicsSize = 6;
 		stats.isBuilding = true;
 		stats.isDropPoint = true;
 		stats.cost = {minerals: 100, gas: 0};
@@ -63,6 +71,54 @@ class Buildings {
 				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
 				icon: null,
 				name: "SCV", 
+				description: ""
+			}
+        ];
+		
+        return building;
+	}
+	
+	public static function Factory (controller : Controller) {
+		var stats = new UnitStats();
+		stats.physicsSize = 4;
+		stats.isBuilding = true;
+		stats.isDropPoint = true;
+		stats.cost = {minerals: 100, gas: 50};
+		stats.movementSpeed = 0;
+		stats.name = "Factory";
+		
+		var building = new Unit(controller, FactoryModel(controller), stats, StatesEnum.Passive, STATIC_BODY);
+
+		building.controlTree = [
+			{
+				key : K.T,
+				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
+				icon: null,
+				name: "Truck", 
+				description: ""
+			}
+        ];
+		
+        return building;
+	}
+	
+	public static function Starport (controller : Controller) {
+		var stats = new UnitStats();
+		stats.physicsSize = 4;
+		stats.isBuilding = true;
+		stats.isDropPoint = true;
+		stats.cost = {minerals: 100, gas: 100};
+		stats.movementSpeed = 0;
+		stats.name = "Starport";
+		
+		var building = new Unit(controller, StarportModel(controller), stats, StatesEnum.Passive, STATIC_BODY);
+
+		building.controlTree = [
+			{
+				key : K.D,
+				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
+				icon: null,
+				name: "Drone", 
 				description: ""
 			}
         ];

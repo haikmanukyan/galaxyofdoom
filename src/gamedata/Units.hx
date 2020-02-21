@@ -10,37 +10,38 @@ import controllers.Controller;
 
 class Units {
 	public static function WorkerModel (controller : Controller) {
-		var model = controller.game.cache.loadModel(hxd.Res.Cube);
+		var model = controller.game.cache.loadModel(hxd.Res.SCV);
+		model.setScale(0.01);
 		model.getMaterials()[0].color = controller.player.color;
 
 		return model;
 	}
 	public static function MarineModel (controller : Controller) {
-		var model = controller.game.cache.loadModel(hxd.Res.Cube);
+		var model = controller.game.cache.loadModel(hxd.Res.Soldier);
 		model.getMaterials()[0].color = controller.player.color;
-		model.scale(1.1);
+		model.scale(0.03);
 
-		var gun2 = controller.game.cache.loadModel(hxd.Res.Cube);
-		gun2.setScale(0.2);
-		gun2.scaleZ = 0.4;
-		gun2.y = -1;
-		gun2.x = -0.1;
-		gun2.z = 0.5;
-		var gun3 = controller.game.cache.loadModel(hxd.Res.Cube);
-		gun3.setScale(0.2);
-		gun3.scaleZ = 0.5;
-		gun3.y = -1;
-		gun3.x = -1;
-		gun3.z = 0.2;
-		var gun = controller.game.cache.loadModel(hxd.Res.Cube);
-		gun.setScale(0.1);
-		gun.scaleX = 1.2;
-		gun.y = -1;
-		gun.x = -1;
-		gun.z = 0.9;
-		model.addChild(gun);
-		model.addChild(gun2);
-		model.addChild(gun3);
+		// var gun2 = controller.game.cache.loadModel(hxd.Res.Cube);
+		// gun2.setScale(0.2);
+		// gun2.scaleZ = 0.4;
+		// gun2.y = -1;
+		// gun2.x = -0.1;
+		// gun2.z = 0.5;
+		// var gun3 = controller.game.cache.loadModel(hxd.Res.Cube);
+		// gun3.setScale(0.2);
+		// gun3.scaleZ = 0.5;
+		// gun3.y = -1;
+		// gun3.x = -1;
+		// gun3.z = 0.2;
+		// var gun = controller.game.cache.loadModel(hxd.Res.Cube);
+		// gun.setScale(0.1);
+		// gun.scaleX = 1.2;
+		// gun.y = -1;
+		// gun.x = -1;
+		// gun.z = 0.9;
+		// model.addChild(gun);
+		// model.addChild(gun2);
+		// model.addChild(gun3);
 
 		return model;
 	}
@@ -60,6 +61,20 @@ class Units {
 				action : controller.SetPending(Tasks.Build(Buildings.Barracks), false, Buildings.BarracksModel(controller)),
 				icon: null,
 				name: "Barracks", 
+				description: ""
+			},
+			{
+				key : K.S,
+				action : controller.SetPending(Tasks.Build(Buildings.Starport), false, Buildings.StarportModel(controller)),
+				icon: null,
+				name: "Starport", 
+				description: ""
+			},
+			{
+				key : K.F,
+				action : controller.SetPending(Tasks.Build(Buildings.Factory), false, Buildings.FactoryModel(controller)),
+				icon: null,
+				name: "Factory", 
 				description: ""
             },
             {
@@ -88,7 +103,7 @@ class Units {
 			{
 				key : K.D,
 				action : controller.SetPending(Tasks.Deliver),
-				icon: hxd.Res.Skeleton01,
+				icon: hxd.Res.treeTexture,
 				name: "Deliver", 
 				description: ""
 			}

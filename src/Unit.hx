@@ -57,6 +57,7 @@ class Unit extends Interactable
     public var stoppingDistance : Float = 1;
     
     // Graphics
+    public var display: Object;
     public var model : Object;
     public var icon : Image;
     public var portrait : Image;
@@ -98,7 +99,8 @@ class Unit extends Interactable
         g = new Graphics(game.s2d);
         
         selectionGraphic = game.cache.loadModel(hxd.Res.Selector);
-        selectionGraphic.scale(0.01);
+        // selectionGraphic.scale(0.01);
+        selectionGraphic.setScale(0.01 * stats.physicsSize);
     }
 
     function get_position() {
@@ -157,6 +159,8 @@ class Unit extends Interactable
         this.size = this.stats.physicsSize;
         this.carries = {minerals: 0, gas: 0};
         this.model = model;
+        display = new Object();
+        display.addChild(model);
         
         destination = position;
         taskQueue = new Array<Task>();
@@ -177,7 +181,7 @@ class Unit extends Interactable
     public function addToScene(position : Vector = null) {
         if (position == null) position = new Vector();
 
-        game.s3d.addChild(model);
+        game.s3d.addChild(display);
         initPhysics(bodyType);
         initUI();
 
@@ -191,19 +195,18 @@ class Unit extends Interactable
     }
 
     public function highlight(mode : HighlightMode) {
-        // selectionGraphic.clear();
-        model.removeChild(selectionGraphic);
+        display.removeChild(selectionGraphic);
 
         switch (mode) {
             case Hover:
                 highlightMode = mode;
-                model.addChild(selectionGraphic);
+                display.addChild(selectionGraphic);
             case Select:
                 highlightMode = mode;
-                model.addChild(selectionGraphic);
+                display.addChild(selectionGraphic);
             case None:
                 highlightMode = mode;
-                model.removeChild(selectionGraphic);
+                display.removeChild(selectionGraphic);
         }
     }
 
@@ -296,9 +299,9 @@ class Unit extends Interactable
 
         updatePosition(dt);
 
-        model.x = position.x;
-        model.y = position.y;
-        model.z = position.z;
+        display.x = position.x;
+        display.y = position.y;
+        display.z = position.z;
 
         if (task != null) {
             switch  (task.state) {
