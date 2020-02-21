@@ -12,6 +12,9 @@ class Unit extends Schema {
 	@:type("string")
 	public var uid: String = "";
 
+	@:type("string")
+	public var name: String = "";
+
 	@:type("array", "number")
 	public var position: ArraySchema<Dynamic> = new ArraySchema<Dynamic>();
 

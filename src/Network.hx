@@ -18,8 +18,8 @@ class Network {
     }
 
     public function join() {
-        // client = new Client('ws://localhost:2567');
-        client = new Client('wss://galaxy-of-doom.herokuapp.com/');
+        client = new Client('ws://localhost:2567');
+        // client = new Client('wss://galaxy-of-doom.herokuapp.com/');
 
         client.joinOrCreate("lobby", [], LobbyState, function(err, room) {           
             if (err != null) {
@@ -28,31 +28,6 @@ class Network {
             }
 
             this.room = room;
-            // room.state.units.onAdd = onEntityAdd;
-            // room.onMessage += onMessage;        
-            // room.state.units.onChange = onEntitiesChange;
-            // room.state.units.onRemove = onEntityRemoved;
         });
-    }
-
-    public function onMessage(message : Dynamic) {
-        trace(message);
-    }
-
-    public function onEntityAdd(entity : Dynamic, key : Dynamic) {
-        entity.onChange = onEntityChange;
-        trace("entity added at " + key + " => " + entity);
-    }
-
-    public function onEntityChange(changes : Dynamic) {
-        trace("entity changes => " + changes);
-    }
-
-    public function onEntitiesChange(entity : Dynamic, key : Dynamic) {
-        trace("entity changed at " + key + " => " + entity);
-    }
-
-    public function onEntityRemoved(entity : Dynamic, key : Dynamic) {
-        trace("entity removed at " + key + " => " + entity);
     }
 }

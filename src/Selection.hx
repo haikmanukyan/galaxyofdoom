@@ -1,3 +1,4 @@
+import controllers.GroupController;
 import gamedata.Tasks;
 import actions.Move;
 import network.LobbyState;
@@ -6,7 +7,7 @@ import controllers.GameController;
 import Unit.HighlightMode;
 
 class Selection {
-    public var controller : GameController;
+    public var controller : GroupController;
     public var units : Array <Unit>;
     public var activeIdx : Int;
     public var activeUnit : Unit;
@@ -111,6 +112,21 @@ class Selection {
         }
     }
 
+    public function dump() {
+        var arr:Array<String> = new Array<String>();
+        for (unit in units) {
+            arr.push(unit.uid);
+        }
+        return arr;
+    }
+
+    public function selectIds(unitIds : Array<String>) {
+        var units = new Array<Unit>();
+        for (id in unitIds)
+            units.push(controller.game.unitMap[id]);
+        select(units);
+    }
+
     public function StartTask(taskSpawner, queue : Bool = false) {
         for (unit in units) {   
             var task = taskSpawner(unit, controller);
@@ -119,6 +135,7 @@ class Selection {
             if (room != null) { 
                 Network.getInstance().room.send({
                     type: "command",
+                    unitIds: dump(),
                     task: task.dump()
                 });
             }

@@ -14,6 +14,7 @@ class TrainUnit extends Action {
 
     public override function update(dt : Float) {
         trainUnit.addToScene(unit.position.add(delta));
+        trainUnit.initNetwork();
         state = ActionState.Complete;
     }
 

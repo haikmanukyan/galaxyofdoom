@@ -122,5 +122,19 @@ class Units {
         unit.smartTask = Tasks.Move;
         
         return unit;
-    }
+	}
+	
+	public static function Get(unitName : String) {
+		switch (unitName) {
+			case "Marine":
+				return Marine;
+			case "SCV":
+				return Worker;
+			case "Barracks":
+				return Buildings.Barracks;
+			case "CommandCenter":
+				return Buildings.CommandCenter;
+		}
+		return null;
+	}
 }

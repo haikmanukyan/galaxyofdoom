@@ -9,11 +9,14 @@ package network;
 import io.colyseus.serializer.schema.Schema;
 
 class Player extends Schema {
+	@:type("string")
+	public var uid: String = "";
+
 	@:type("number")
 	public var color: Dynamic = 0;
 
-	@:type("array", "number")
-	public var position: ArraySchema<Dynamic> = new ArraySchema<Dynamic>();
+	@:type("string")
+	public var name: String = "";
 
 	@:type("map", Unit)
 	public var units: MapSchema<Unit> = new MapSchema<Unit>();

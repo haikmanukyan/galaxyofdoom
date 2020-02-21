@@ -14,6 +14,7 @@ class PlaceBuilding extends Action {
 
     public override function update(dt : Float) {
         building.addToScene(position);
+        building.initNetwork();
         state = ActionState.Complete;
     }
 

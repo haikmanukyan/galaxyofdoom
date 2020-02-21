@@ -30,6 +30,7 @@ class Buildings {
 		stats.physicsSize = 2;
 		stats.isBuilding = true;
 		stats.cost = {minerals: 50, gas: 0};
+		stats.name = "Barracks";
 		stats.movementSpeed = 0;
 		
 		var building = new Unit(controller, BarracksModel(controller), stats,  StatesEnum.Passive, STATIC_BODY);
@@ -52,6 +53,7 @@ class Buildings {
 		stats.isDropPoint = true;
 		stats.cost = {minerals: 100, gas: 0};
 		stats.movementSpeed = 0;
+		stats.name = "CommandCenter";
 		
 		var building = new Unit(controller, CommandCenterModel(controller), stats, StatesEnum.Passive, STATIC_BODY);
 

@@ -168,7 +168,8 @@ class Unit extends Interactable
     public function initNetwork() {
         game.network.room.send({
             type:"newUnit",
-            unit:uid,
+            uid:uid,
+            unitName:stats.name,
             position: [position.x, position.y, position.z]
         });
     }

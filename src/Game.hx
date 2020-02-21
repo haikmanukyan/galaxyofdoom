@@ -28,6 +28,7 @@ class Game extends hxd.App
 	public var ground : Object;
 
 	public var units : Array<Unit>;
+	public var unitMap : Map<String, Unit>;
 	
 	public var window : Window;
 
@@ -132,6 +133,7 @@ class Game extends hxd.App
 		Utils.init(this);
 		cache = new ModelCache();
 		units = new Array<Unit>();
+		unitMap = new Map<String, Unit>();
 		network = Network.getInstance();
 		network.join();
 	}
@@ -139,9 +141,12 @@ class Game extends hxd.App
 	function startGame() {
 		initScene();
 		initPhysics();
-		initNetwork();
+
+		players = new Array<Player>();
+		controllers = new Array<Controller>();
 		
 		initGameController();
+		initNetwork();
 		initMap();
 		initUI();
 
@@ -154,34 +159,24 @@ class Game extends hxd.App
 	var controllers : Array<Controller>;
 
 	function initNetwork() {
-		players = new Array<Player>();
-		controllers = new Array<Controller>();
-
-		network.room.onMessage += onMessage;
-		network.room.send({
-			"type":"getPlayers"
-		});
-	}
-
-	function initNetworkPlayer(playerId : String, playerColor : Int) {
-		var ghostPlayer : Player = new Player();
-		ghostPlayer.color = Vector.fromColor(playerColor);
-		var ghost : GhostController = new GhostController(this, ghostPlayer, playerId);
-		controllers.push(ghost);
-	}
-
-	function initNetworkPlayers(playerIds : Array<String>, playerColors : Array<Int>) {		
-		for (i in 0 ... playerIds.length) {
-			if (playerIds[i] != network.room.sessionId) {
-				initNetworkPlayer(playerIds[i], playerColors[i]);
+		for (player in network.room.state.players) {
+			if (player.uid != network.room.sessionId) {
+				var ghostController : GhostController = new GhostController(this, player);
+				controllers.push(ghostController);	
 			}
 		}
+		
+		network.room.state.players.onAdd = onPlayerAdded;
 	}
 
-	function onNewPlayer(uid : String, color : Int) {
-		if (uid == network.room.sessionId) return;
-		var timer : Timer = new Timer(100);
-		timer.run = function () { initNetworkPlayer(uid, color); timer.stop();}		
+	function onJoined() {
+		trace("joined!");
+	}
+
+	function onPlayerAdded(player : network.Player, playerId : String) {
+		trace(player);
+		var ghostController : GhostController = new GhostController(this, player);
+		controllers.push(ghostController);
 	}
 
 	public function getUnitById(uid : String) {
@@ -206,9 +201,10 @@ class Game extends hxd.App
 		switch (message.type) {
 			case "playerList":
 				trace(message.players);
-				initNetworkPlayers(message.players, message.colors);
 			case "newPlayer":
-				onNewPlayer(message.uid, message.color);
+				trace("New Player");
+			case "newUnit":
+				trace("NEW UNIT!");
 		}
 	}
 
@@ -219,12 +215,13 @@ class Game extends hxd.App
 	public function registerUnit(unit : Unit) {
 		controller.initInteract(unit.interactive, unit);
 		units.push(unit);
+		unitMap[unit.uid] = unit;
 	}
 
 	override function update(dt:Float) {
 		if (network.room == null) return;
 		if (!gameReady) {
-			trace("CONNECTION ESTABLISHED!");
+			trace("CONNECTION ESTABLISHED!", network.room.sessionId);
 			startGame();
 			gameReady = true;
 		}

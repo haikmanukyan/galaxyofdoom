@@ -1,6 +1,5 @@
 package actions;
 
-import network.MoveAction;
 import box2D.common.math.B2Vec2;
 import Action.ActionState;
 import h3d.Vector;
