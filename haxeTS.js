@@ -663,7 +663,7 @@ Network.getInstance = function() {
 Network.prototype = {
 	join: function() {
 		var _gthis = this;
-		this.client = new io_colyseus_Client("ws://galaxy-of-doom.herokuapp.com/");
+		this.client = new io_colyseus_Client("wss://galaxy-of-doom.herokuapp.com/");
 		this.client.joinOrCreate_network_LobbyState("lobby",new haxe_ds_StringMap(),network_LobbyState,function(err,room) {
 			if(err != null) {
 				haxe_Log.trace("JOIN ERROR: " + err,{ fileName : "src/Network.hx", lineNumber : 26, className : "Network", methodName : "join"});
