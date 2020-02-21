@@ -179,6 +179,7 @@ class Game extends hxd.App
 	}
 
 	function onNewPlayer(uid : String, color : Int) {
+		if (uid == network.room.sessionId) return;
 		var timer : Timer = new Timer(100);
 		timer.run = function () { initNetworkPlayer(uid, color); timer.stop();}		
 	}

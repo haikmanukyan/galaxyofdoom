@@ -18,7 +18,8 @@ class Network {
     }
 
     public function join() {
-        client = new Client('ws://localhost:2567');
+        // client = new Client('ws://localhost:2567');
+        client = new Client('ws://galaxy-of-doom.herokuapp.com/');
 
         client.joinOrCreate("lobby", [], LobbyState, function(err, room) {           
             if (err != null) {
