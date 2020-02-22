@@ -11,13 +11,15 @@ class Attack extends Action {
     }   
 
     public override function update(dt : Float){
-        if (target != null) {
+        if (target != null  && ! target.stats.isInvulnerable) {
             if (target.isAlive) {
                 target.stats.damage();
+                unit.display.setDirection(target.position.sub(unit.position));
                 state = ActionState.Complete;
             }
             else {
                 state = ActionState.Failed;
+                unit.playAnimation("idle");
             }
         }
         else {

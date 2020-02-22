@@ -12,6 +12,8 @@ class RecourceNodes {
 		var stats = new UnitStats();
         stats.physicsSize = 1;
         stats.isResource = true;
+        stats.isInvulnerable = true;
+        stats.physicsSize = 1.5;
         
         var model = controller.game.cache.loadModel(hxd.Res.Ore);
         model.scale(0.03);
@@ -25,8 +27,9 @@ class RecourceNodes {
     }
     public static function GasGeyser (controller : Controller) {
 		var stats = new UnitStats();
-        stats.physicsSize = 2;
+        stats.physicsSize = 4;
         stats.isResource = true;
+        stats.isInvulnerable = true;
         
         var model = controller.game.cache.loadModel(hxd.Res.OilWell);
         model.scale(0.03);

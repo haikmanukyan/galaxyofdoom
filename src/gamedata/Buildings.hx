@@ -23,7 +23,8 @@ class Buildings {
 	public static function StarportModel(controller : Controller) {
 		var model = controller.game.cache.loadModel(hxd.Res.StarPort);
 		model.setRotation(0,0,3*Math.PI / 4);
-		model.scale(0.05);
+		model.scale(5);
+		// model.x = -4;
 		return model;		
 	}
 	public static function FactoryModel(controller : Controller) {
@@ -39,6 +40,8 @@ class Buildings {
 		stats.isBuilding = true;
 		stats.cost = {minerals: 50, gas: 0};
 		stats.name = "Barracks";
+		stats.maxHitPoints = 50;
+		stats.hitPoints = 50;
 		stats.movementSpeed = 0;
 		
 		var building = new Unit(controller, BarracksModel(controller), stats,  StatesEnum.Passive, STATIC_BODY);
@@ -92,9 +95,16 @@ class Buildings {
 		building.controlTree = [
 			{
 				key : K.T,
-				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
+				action : controller.Start(Tasks.Train(Units.Truck, new Vector(2.5,2.5,0))),
 				icon: null,
 				name: "Truck", 
+				description: ""
+			},
+			{
+				key : K.H,
+				action : controller.Start(Tasks.Train(Units.Humvee, new Vector(2.5,2.5,0))),
+				icon: null,
+				name: "Humvee", 
 				description: ""
 			}
         ];
@@ -106,7 +116,6 @@ class Buildings {
 		var stats = new UnitStats();
 		stats.physicsSize = 4;
 		stats.isBuilding = true;
-		stats.isDropPoint = true;
 		stats.cost = {minerals: 100, gas: 100};
 		stats.movementSpeed = 0;
 		stats.name = "Starport";
@@ -116,7 +125,7 @@ class Buildings {
 		building.controlTree = [
 			{
 				key : K.D,
-				action : controller.Start(Tasks.Train(Units.Worker, new Vector(2.5,2.5,0))),
+				action : controller.Start(Tasks.Train(Units.Drone, new Vector(2.5,2.5,0))),
 				icon: null,
 				name: "Drone", 
 				description: ""

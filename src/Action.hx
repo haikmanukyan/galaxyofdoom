@@ -21,7 +21,10 @@ class Action {
     public function update(dt:Float) {
     }
 
-    public function dump() {
-        return {};
+    public function dump() : Dynamic {
+        return {
+            type: "Debug",
+            text: "Not Implemented :P"
+        };
     }
 }

@@ -7,6 +7,7 @@ class UnitStats {
     public var isResource : Bool = false;
     public var isBuilding : Bool = false;
     public var isDropPoint : Bool = false;
+    public var isInvulnerable : Bool = false;
 
     public var physicsSize : Float = 1;
     public var maxHitPoints : Float = 10;

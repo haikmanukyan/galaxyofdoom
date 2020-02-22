@@ -136,7 +136,8 @@ class Selection {
                 Network.getInstance().room.send({
                     type: "command",
                     unitIds: dump(),
-                    task: task.dump()
+                    task: task.dump(),
+                    repeat: task.repeat
                 });
             }
         }

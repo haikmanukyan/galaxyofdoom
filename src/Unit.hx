@@ -49,7 +49,7 @@ class Unit extends Interactable
     public var state : State;
     public var stats : UnitStats;
     public var carries : Resource;
-
+    
     // PRivate
     public var taskQueue : Array<Dynamic>;
     public var smartTask : Dynamic;
@@ -62,6 +62,8 @@ class Unit extends Interactable
     public var icon : Image;
     public var portrait : Image;
     public var resourceModel : Object;
+    public var animations : Map<String, Animation>;
+    public var currentAnimation : String;
     
     // Physics
     public var body : B2Body;
@@ -100,22 +102,21 @@ class Unit extends Interactable
         
         selectionGraphic = game.cache.loadModel(hxd.Res.Selector);
         // selectionGraphic.scale(0.01);
-        selectionGraphic.setScale(0.01 * stats.physicsSize);
-    }
+        selectionGraphic.setScale(0.006 * stats.physicsSize);   }
 
     function get_position() {
         if (isAlive && body != null) {
             var p = body.getPosition();
-            return new Vector(p.x, p.y, model.z);
+            return new Vector(p.x, p.y, display.z);
         }
         else
-            return new Vector(model.x, model.y, model.z);
+            return new Vector(display.x, display.y, display.z);
     }
 
     function set_position(newPosition : Vector) {
         body.setPosition(new B2Vec2(newPosition.x, newPosition.y));
         destination = newPosition;
-        model.z = 0;
+        display.z = 0;
         return position = newPosition;
     }
 
@@ -150,6 +151,7 @@ class Unit extends Interactable
         game = controller.game;
         player = controller.player;
         uid = Utils.uuid();
+        animations = new Map<String, h3d.anim.Animation>();
         
         this.controller = controller;
         this.ai = new UnitController(this, game, player);
@@ -227,6 +229,9 @@ class Unit extends Interactable
             task = taskQueue.pop()(this, controller);
             task.start(this, controller);
         }
+        else {
+            task = null;
+        }
     }
 
     public function queueTask(task : Task) {
@@ -247,6 +252,8 @@ class Unit extends Interactable
 
     function updatePosition(dt:Float) {
         if (!reachedDestination()) {
+            playAnimation("run");
+
             var direction = destination.sub(position).getNormalized();
             direction.scale3(stats.movementSpeed);
             
@@ -254,12 +261,22 @@ class Unit extends Interactable
             body.setLinearVelocity(new B2Vec2(direction.x, direction.y));
 
             if (direction.length() > 0)
-                model.setDirection(direction);
+                display.setDirection(direction);
         }
         else {
             body.setLinearVelocity(new B2Vec2(0,0));
             setDestination(position);
+            if (currentAnimation == "run")
+                playAnimation("idle");  
         }
+    }
+
+    public function playAnimation(animationName : String, forceRestart : Bool = false) {
+        if (currentAnimation == animationName && !forceRestart) return;
+        if (animations.exists(animationName)) {
+            model.playAnimation(animations[animationName]);
+        }
+        currentAnimation = animationName;
     }
 
     public function reachedDestination(destination = null, stoppingDistance = null) {

@@ -16,6 +16,8 @@ class MoveTarget extends Action {
     public override function update(dt : Float) {
         if (target == null || !target.isAlive) {
             state = ActionState.Failed;
+            trace("Cant reach target");
+            unit.playAnimation("idle");
             return; 
         }
 

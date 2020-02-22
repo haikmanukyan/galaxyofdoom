@@ -7,7 +7,7 @@ import h3d.Vector;
 class Tasks {
     public static var Move = function (unit : Unit, controller : Controller) {
         return new Task([
-            new Move(controller.position)
+            new Move(controller.position),
         ]);
     }
     public static var Follow = function (unit : Unit, controller : Controller) {
@@ -26,6 +26,7 @@ class Tasks {
             return new Task([
                 new Attack(controller.target),
                 new Wait(0.1),
+                new Play("attack"),
                 new MoveTarget(controller.target, unit.stats.attackRange)
             ], true);
         }
@@ -43,7 +44,7 @@ class Tasks {
                 new Move(dropPoint.position, dropPoint.stats.physicsSize + unit.stats.physicsSize + 1),
                 new Gather(controller.target),
                 new Wait(0.1),
-                new Move(controller.position)
+                new Move(controller.position, controller.target.stats.physicsSize + unit.stats.physicsSize + 1)
             ], true);
         }
         else {
@@ -106,12 +107,15 @@ class Tasks {
         switch (taskName) {
             case "worker_smart":
                 return WorkerSmart;
+            case "debug":
+                return Debug;
         }
         return null;
     }
 
     public static function Find(task : Dynamic) {
         if (task == WorkerSmart) return "worker_smart";
+        if (task == Debug) return "debug";
         return "null";
     }
 }

@@ -11,37 +11,37 @@ import controllers.Controller;
 class Units {
 	public static function WorkerModel (controller : Controller) {
 		var model = controller.game.cache.loadModel(hxd.Res.SCV);
-		model.setScale(0.01);
 		model.getMaterials()[0].color = controller.player.color;
+		model.setScale(0.01);
 
 		return model;
 	}
 	public static function MarineModel (controller : Controller) {
-		var model = controller.game.cache.loadModel(hxd.Res.Soldier);
-		model.getMaterials()[0].color = controller.player.color;
-		model.scale(0.03);
+		var model = controller.game.cache.loadModel(hxd.Res.Soldier_Idle);
+		model.playAnimation(controller.game.cache.loadAnimation(hxd.Res.Soldier_Idle));
 
-		// var gun2 = controller.game.cache.loadModel(hxd.Res.Cube);
-		// gun2.setScale(0.2);
-		// gun2.scaleZ = 0.4;
-		// gun2.y = -1;
-		// gun2.x = -0.1;
-		// gun2.z = 0.5;
-		// var gun3 = controller.game.cache.loadModel(hxd.Res.Cube);
-		// gun3.setScale(0.2);
-		// gun3.scaleZ = 0.5;
-		// gun3.y = -1;
-		// gun3.x = -1;
-		// gun3.z = 0.2;
-		// var gun = controller.game.cache.loadModel(hxd.Res.Cube);
-		// gun.setScale(0.1);
-		// gun.scaleX = 1.2;
-		// gun.y = -1;
-		// gun.x = -1;
-		// gun.z = 0.9;
-		// model.addChild(gun);
-		// model.addChild(gun2);
-		// model.addChild(gun3);
+		model.getMaterials()[0].color = controller.player.color;
+
+		return model;
+	}
+	public static function TruckModel (controller : Controller) {
+		var model = controller.game.cache.loadModel(hxd.Res.Truck);
+		model.getMaterials()[0].color = controller.player.color;
+		model.setScale(0.011);
+
+		return model;
+	}
+	public static function HumveeModel (controller : Controller) {
+		var model = controller.game.cache.loadModel(hxd.Res.Humvee);
+		model.getMaterials()[0].color = controller.player.color;
+		model.setScale(0.01);
+
+		return model;
+	}
+	public static function DroneModel (controller : Controller) {
+		var model = controller.game.cache.loadModel(hxd.Res.Drone);
+		model.getMaterials()[0].color = controller.player.color;
+		model.z = 5;
 
 		return model;
 	}
@@ -52,6 +52,7 @@ class Units {
 		stats.name = "SCV";
 		stats.cost = {minerals: 50, gas: 0};
 		stats.movementSpeed = 15;
+		stats.physicsSize = 2;
 		
 		var unit = new Unit(controller, WorkerModel(controller), stats);
 
@@ -117,8 +118,93 @@ class Units {
 		stats.cost = {minerals: 50, gas: 0};
 		stats.attackRange = 10;
 		stats.name = "Marine";
+		stats.physicsSize = 1.1;
 
 		var unit = new Unit(controller, MarineModel(controller), stats, StatesEnum.Idle);
+		unit.animations["idle"] = controller.game.cache.loadAnimation(hxd.Res.Soldier_Idle);
+		unit.animations["run"] = controller.game.cache.loadAnimation(hxd.Res.Soldier_Run);
+		unit.animations["attack"] = controller.game.cache.loadAnimation(hxd.Res.Soldier_Shoot);
+		
+		unit.controlTree = [
+			{
+				key : K.A,
+				action : controller.SetPending(Tasks.Attack),
+				icon: null,
+				name: "Attack", description: ""
+			},
+			{
+				key : K.P,
+				action : controller.SetPending(Tasks.Patrol),
+				icon: null,
+				name: "Patrol", description: ""
+			}
+		];
+        unit.smartTask = Tasks.Move;
+        
+        return unit;
+	}
+	public static function Humvee (controller : Controller) {
+		var stats = new UnitStats();
+		stats.cost = {minerals: 50, gas: 50};
+		stats.attackRange = 10;
+		stats.physicsSize = 2;
+		stats.name = "Humvee";
+
+		var unit = new Unit(controller, HumveeModel(controller), stats, StatesEnum.Idle);
+		
+		unit.controlTree = [
+			{
+				key : K.A,
+				action : controller.SetPending(Tasks.Attack),
+				icon: null,
+				name: "Attack", description: ""
+			},
+			{
+				key : K.P,
+				action : controller.SetPending(Tasks.Patrol),
+				icon: null,
+				name: "Patrol", description: ""
+			}
+		];
+        unit.smartTask = Tasks.Move;
+        
+        return unit;
+	}
+	public static function Drone (controller : Controller) {
+		var stats = new UnitStats();
+		stats.cost = {minerals: 50, gas: 50};
+		stats.attackRange = 10;
+		stats.physicsSize = 2;
+		stats.name = "Humvee";
+
+		var unit = new Unit(controller, DroneModel(controller), stats, StatesEnum.Idle);
+		
+		unit.controlTree = [
+			{
+				key : K.A,
+				action : controller.SetPending(Tasks.Attack),
+				icon: null,
+				name: "Attack", description: ""
+			},
+			{
+				key : K.P,
+				action : controller.SetPending(Tasks.Patrol),
+				icon: null,
+				name: "Patrol", description: ""
+			}
+		];
+        unit.smartTask = Tasks.Move;
+        
+        return unit;
+	}
+	public static function Truck (controller : Controller) {
+		var stats = new UnitStats();
+		stats.cost = {minerals: 100, gas: 50};
+		stats.attackRange = 10;
+		stats.physicsSize = 3;
+		stats.name = "Truck";
+
+		var unit = new Unit(controller, TruckModel(controller), stats, StatesEnum.Idle);
 		
 		unit.controlTree = [
 			{
@@ -145,10 +231,20 @@ class Units {
 				return Marine;
 			case "SCV":
 				return Worker;
+			case "Truck":
+				return Truck;
+			case "Humvee":
+				return Humvee;
+			case "Drone":
+				return Drone;
 			case "Barracks":
 				return Buildings.Barracks;
 			case "CommandCenter":
 				return Buildings.CommandCenter;
+			case "Factory":
+				return Buildings.Factory;
+			case "Starport":
+				return Buildings.Starport;
 		}
 		return null;
 	}

@@ -7,6 +7,7 @@ import h3d.Vector;
 class Move extends Action {
     var destination : Vector;
     var stoppingDistance : Float;
+    var isSet : Bool = false;
 
     public function new(destination : Vector, stoppingDistance : Float = 3) {
         this.destination = destination;
@@ -24,7 +25,7 @@ class Move extends Action {
         }
     }
 
-    public override function dump() {
+    public override function dump() : Dynamic {
         return {
             type: "Move",
             destination: Utils.dumpVec(destination),

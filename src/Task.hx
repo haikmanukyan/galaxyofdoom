@@ -1,3 +1,4 @@
+import actions.Debug;
 import actions.Move;
 import controllers.Controller;
 import h3d.scene.Object;
@@ -82,19 +83,24 @@ class Task {
         }
     }
 
-    public static function fromData(task : {actions:Array<Dynamic>}) {
+    public static function fromData(task : Dynamic) {
         var actions : Array<Action> = new Array<Action>();
         var action : Action;
+        var actionsArray : Array<Dynamic> = task.actions;
 
-        for (actionData in task.actions) {
+        for (actionData in actionsArray) {
             switch (actionData.type) {
                 case "Move":
                     action = new Move(Utils.arr2vec(actionData.destination), actionData.stoppingDistance);
-                    actions.push(action);            
+                    actions.push(action);     
+                case "Debug":
+                    action = new Debug("Not Implemented!");
+                    actions.push(action);       
             }
         }
 
         var newTask :Task = new Task(actions);
+        newTask.repeat = task.repeat;
         return newTask;
     }
 }

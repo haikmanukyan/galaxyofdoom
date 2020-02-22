@@ -30,9 +30,9 @@ class Utils {
     }
 
     public static function getNearestDropPoint(unit : Unit, controller : Controller) : Unit {
-        for (unit in game.units) {
-            if (unit.stats.isDropPoint) {
-                return unit;
+        for (unit1 in game.units) {
+            if (unit1.stats.isDropPoint && unit.player == unit1.player) {
+                return unit1;
             }
         }
         return null;

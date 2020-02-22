@@ -189,7 +189,9 @@ class Game extends hxd.App
 	function initGameController() {
 		// Human Player
 		player = new Player();
-		player.resources.minerals = 200;
+		player.resources.minerals = 500;
+		player.resources.gas = 200;
+
 		controller = new GameController(this, player);
 		controller.reset();
 	
