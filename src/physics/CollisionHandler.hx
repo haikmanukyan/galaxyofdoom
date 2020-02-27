@@ -1,3 +1,5 @@
+package physics;
+
 import box2D.dynamics.contacts.B2Contact;
 import box2D.dynamics.B2ContactListener;
 

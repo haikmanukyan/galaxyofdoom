@@ -4,6 +4,6 @@
 -lib hlsdl
 -D windows
 -cp src
--hl haxeTS.hl
+-hl build/haxeTS.hl
 -main Game
-# -D windowSize=1366x768
+-D windowSize=1366x768

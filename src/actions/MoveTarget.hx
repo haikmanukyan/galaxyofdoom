@@ -31,4 +31,12 @@ class MoveTarget extends Action {
             unit.stoppingDistance = stoppingDistance;
         }
     }
+
+    public override function dump() : Dynamic {
+        return {
+            type: "MoveTarget",
+            target: target.uid,
+            stoppingDistance: stoppingDistance
+        };
+    }
 }

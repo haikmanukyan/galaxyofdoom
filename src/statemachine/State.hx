@@ -1,3 +1,5 @@
+package statemachine;
+
 import Globals.Transition;
 
 class State {

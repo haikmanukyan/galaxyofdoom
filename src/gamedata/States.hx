@@ -1,6 +1,7 @@
 package gamedata;
 
 import controllers.Controller;
+import statemachine.State;
 
 enum StatesEnum {
     Passive;

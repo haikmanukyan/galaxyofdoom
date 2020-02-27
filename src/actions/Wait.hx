@@ -18,4 +18,11 @@ class Wait extends Action {
         if (currentTime - startTime > time)
             state = ActionState.Complete;
     }
+
+    public override function dump() : Dynamic {
+        return {
+            type: "Wait",
+            amount: time
+        };
+    }
 }

@@ -18,4 +18,11 @@ class Play extends Action {
             state = Complete;   
         }
     }
+
+    public override function dump() : Dynamic {
+        return {
+            type: "Play",
+            animationName: animationName
+        };
+    }
 }

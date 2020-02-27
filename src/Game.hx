@@ -15,8 +15,9 @@ import box2D.dynamics.B2World;
 
 import controllers.GameController;
 import controllers.GhostController;
+import physics.CollisionHandler;
 import gamedata.ResourceNodes.RecourceNodes;
-
+import network.Network;
 
 class Game extends hxd.App 
 {
@@ -180,10 +181,7 @@ class Game extends hxd.App
 	}
 
 	public function getUnitById(uid : String) {
-		for (unit in units) 
-			if (unit.uid == uid)
-				return unit;
-		return null;
+		return unitMap[uid];
 	}
 
 	function initGameController() {

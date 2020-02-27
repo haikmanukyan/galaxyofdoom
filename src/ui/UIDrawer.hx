@@ -1,3 +1,5 @@
+package ui;
+
 import hxd.res.Image;
 import box2D.dynamics.B2DebugDraw;
 import h2d.Mask;

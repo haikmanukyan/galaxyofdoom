@@ -1,6 +1,5 @@
 package controllers;
 
-import gamedata.Units;
 import hxd.res.Image;
 import box2D.dynamics.B2DebugDraw;
 import h2d.Mask;
@@ -19,6 +18,10 @@ import h3d.scene.Object;
 import haxe.Constraints.Function;
 import hxd.Key in K;
 import Std.int;
+import network.Network;
+
+import gamedata.Units;
+import ui.UIDrawer;
 
 class GameController extends GroupController {
     var clickedLMB : Bool;

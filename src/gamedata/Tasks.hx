@@ -102,20 +102,4 @@ class Tasks {
             return Tasks.Move(unit, controller);
         } 
     }
-
-    public static function Get(taskName : String, param : String) {
-        switch (taskName) {
-            case "worker_smart":
-                return WorkerSmart;
-            case "debug":
-                return Debug;
-        }
-        return null;
-    }
-
-    public static function Find(task : Dynamic) {
-        if (task == WorkerSmart) return "worker_smart";
-        if (task == Debug) return "debug";
-        return "null";
-    }
 }

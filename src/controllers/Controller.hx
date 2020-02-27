@@ -12,10 +12,11 @@ import haxe.Constraints.Function;
 import hxd.Key in K;
 
 class Controller {
-    var queueTask : Bool;
     public var game : Game;
     public var player : Player;
+    public var isGhost : Bool = false;
     
+    var queueTask : Bool;
     public var position : Vector;
     public var target : Dynamic;
 
@@ -46,7 +47,6 @@ class Controller {
     }
 
     public function hasTarget() {
-        return target != null;  
         if (target == null) return false;
         return target.isAlive;
     }
@@ -54,5 +54,9 @@ class Controller {
     public function update (dt : Float) {
     }
     public function updateSelection () {
+    }
+
+    public function dump() {
+
     }
 }

@@ -1,3 +1,5 @@
+package gamedata;
+
 import hxd.res.Model;
 import hxd.res.Image;
 import h3d.scene.Object;

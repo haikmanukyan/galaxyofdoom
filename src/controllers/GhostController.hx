@@ -26,48 +26,62 @@ class GhostController extends GroupController {
         initNetwork();
     }
 
-    function onUnitAdded(networkUnit : network.Unit, unitId : String) {
-        trace("NEW UJNIT");
-        var unitSpawn = Units.Get(networkUnit.name);
-        if (unitSpawn != null) {
-            var unit = unitSpawn(this);
-            unit.uid = networkUnit.uid;
-            unit.addToScene(new Vector(
-                networkUnit.position.items[0], 
-                networkUnit.position.items[1],
-                networkUnit.position.items[2]));
-        }
-        
-    }
-
     public function initNetwork() {
         for (networkUnit in networkPlayer.units) {
             onUnitAdded(networkUnit, networkUnit.uid);
         }
 
-        networkPlayer.units.onAdd = onUnitAdded;
         room.onMessage += onMessage;
+        networkPlayer.units.onAdd = onUnitAdded;
     }
 
     public function onMessage (message : Dynamic) {
         switch (message.type) {
             case "command":
-                trace(message.playerId, playerId);
                 if (message.playerId == playerId) {
                     startNetworkCommand(message);
+                }
+            case "unitCommand":
+                if (message.playerId == playerId) {
+                    startUnitCommand(message);
                 }
         }
     }
 
+    function onUnitAdded(networkUnit : network.Unit, unitId : String) {
+        var unitSpawn = Units.Get(networkUnit.name);
+        if (unitSpawn != null) {
+            var unit = unitSpawn(this);
+            unit.uid = networkUnit.uid;
+            unit.ai = new GhostUnitController(game, networkPlayer);
+            unit.addToScene(new Vector(
+                networkUnit.position.items[0], 
+                networkUnit.position.items[1],
+                networkUnit.position.items[2]));
+            
+            var networkAi : GhostUnitController = cast(unit.ai, GhostUnitController);
+        }
+        
+    }
+
+    function onUnitKilled() {
+
+    }
+
     function startNetworkCommand(message : Dynamic) {
-        trace("starting");
         var arr: Array<String> = message.unitIds;
         for (unitId in arr) {
             var unit = game.unitMap[unitId];
             if (unit != null) {
-                unit.startTask(Task.fromData(message.task));
+                unit.startTask(Task.fromData(message.task, this));
             }
         }
+    }
+
+    function startUnitCommand(message : Dynamic) {
+        var unit = game.unitMap[message.unitId];
+        if (unit != null)
+            unit.startTask(Task.fromData(message.task, this));
     }
 
     public override function update(dt : Float) {

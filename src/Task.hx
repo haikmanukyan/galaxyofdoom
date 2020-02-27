@@ -1,3 +1,7 @@
+import actions.Play;
+import actions.Wait;
+import actions.MoveTarget;
+import actions.Attack;
 import actions.Debug;
 import actions.Move;
 import controllers.Controller;
@@ -78,29 +82,43 @@ class Task {
         for (action in actions)
             actionsDump.push(action.dump());
         return {
-            action:(action==null?null:action.dump()),
-            actions:actionsDump
+            actions:actionsDump,
+            repeat: repeat
         }
     }
 
-    public static function fromData(task : Dynamic) {
+    public static function fromData(task : Dynamic, controller : Controller) {
         var actions : Array<Action> = new Array<Action>();
-        var action : Action;
+        var action : Action = new Debug("Not Implemented!");
         var actionsArray : Array<Dynamic> = task.actions;
 
         for (actionData in actionsArray) {
             switch (actionData.type) {
                 case "Move":
                     action = new Move(Utils.arr2vec(actionData.destination), actionData.stoppingDistance);
-                    actions.push(action);     
-                case "Debug":
-                    action = new Debug("Not Implemented!");
-                    actions.push(action);       
+                    
+                case "MoveTarget":
+                    var target = controller.game.getUnitById(actionData.target);
+                    if (target != null)
+                        action = new MoveTarget(controller.game.getUnitById(actionData.target), actionData.stoppingDistance);
+
+                case "Attack":
+                    var target = controller.game.getUnitById(actionData.target);
+                    if (target != null) 
+                        action = new Attack(target, actionData.amount);
+
+                case "Wait":
+                    action = new Wait(actionData.amount);
+
+                case "Play":
+                    action = new Play(actionData.animationName);
             }
+
+            actions.push(action);
         }
 
-        var newTask :Task = new Task(actions);
-        newTask.repeat = task.repeat;
+        trace(task.actions);
+        var newTask :Task = new Task(actions, task.repeat);
         return newTask;
     }
 }

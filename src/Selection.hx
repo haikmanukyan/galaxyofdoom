@@ -5,6 +5,7 @@ import network.LobbyState;
 import io.colyseus.Room;
 import controllers.GameController;
 import Unit.HighlightMode;
+import network.Network;
 
 class Selection {
     public var controller : GroupController;
@@ -132,7 +133,7 @@ class Selection {
             var task = taskSpawner(unit, controller);
             unit.startTask(task);
             
-            if (room != null) { 
+            if (false && room != null) { 
                 Network.getInstance().room.send({
                     type: "command",
                     unitIds: dump(),

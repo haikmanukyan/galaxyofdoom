@@ -88,6 +88,12 @@ class Units {
 		];
 		unit.controlTree = [
 			{
+				key : K.A,
+				action : controller.SetPending(Tasks.Attack),
+				icon: null,
+				name: "Attack", description: ""
+			},
+			{
 				key : K.B,
 				action : controller.SetTree(buildActions),
 				icon: null,

@@ -24,6 +24,9 @@ import controllers.Controller;
 import Globals.ControlNode;
 import Globals.Resource;
 import Task.TaskState;
+import gamedata.UnitStats;
+import statemachine.State;
+import network.Network;
 
 enum HighlightMode {
     Hover;
@@ -31,7 +34,7 @@ enum HighlightMode {
     None;
 }
 
-class Unit extends Interactable
+class Unit
 {
     public static inline var PIXELS_IN_METER:Int = 100;
 
@@ -226,8 +229,7 @@ class Unit extends Interactable
     public function nextTask(controller : Controller = null) {
         if (taskQueue.length > 0) {
             controller = controller == null? this.controller : controller;
-            task = taskQueue.pop()(this, controller);
-            task.start(this, controller);
+            startTask(taskQueue.pop()(this, controller));
         }
         else {
             task = null;
@@ -239,9 +241,12 @@ class Unit extends Interactable
     }
 
     public function startTask(task : Task) {
-        if (taskQueue.length > 0) taskQueue = new Array<Task>();
         this.task = task;
         task.start(this, game.controller);
+
+        if (!ai.isGhost) {
+            Network.SendUnitCommand(uid, task);
+        }
     }
 
     public function transitionToState(state : StatesEnum) {
